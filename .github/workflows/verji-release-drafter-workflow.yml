@@ -1,4 +1,4 @@
-name: Release Drafter Workflow
+name: Verji Release Drafter Workflow
 on:
     workflow_call:
         inputs:
