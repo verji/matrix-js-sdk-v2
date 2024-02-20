@@ -64,7 +64,7 @@ jobs:
                           const fromVersion = JSON.parse((await github.request(`https://raw.githubusercontent.com/${owner}/${repo}/verji-master/package.json`)).data).dependencies[DEPENDENCY];
                           const toVersion = require("./package.json").dependencies[DEPENDENCY];
 
-                          if (toVersion.endsWith("#verji-develop")) {
+                          if (toVersion.endsWith("#develop")) {
                               core.warning(`${DEPENDENCY} will be kept at ${fromVersion}`, { title: "Develop dependency found" });
                           } else {
                               deps.push([DEPENDENCY, fromVersion, toVersion]);
