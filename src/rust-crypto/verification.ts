@@ -567,8 +567,10 @@ export class RustQrCodeVerifier extends BaseRustVerifer<RustSdkCryptoJs.Qr> impl
         // application to prompt the user to confirm their side.
         if (this.callbacks === null && this.inner.hasBeenScanned()) {
             this.callbacks = {
-                confirm: () => this.confirmScanning(),
-                cancel: () => this.cancel(),
+                confirm: (): void => {
+                    this.confirmScanning();
+                },
+                cancel: (): void => this.cancel(),
             };
         }
 
@@ -708,10 +710,16 @@ export class RustSASVerifier extends BaseRustVerifer<RustSdkCryptoJs.Sas> implem
                     }
                 },
                 mismatch: (): void => {
-                    throw new Error("impl");
+                    const request = this.inner.cancelWithCode("m.mismatched_sas");
+                    if (request) {
+                        this.outgoingRequestProcessor.makeOutgoingRequest(request);
+                    }
                 },
                 cancel: (): void => {
-                    throw new Error("impl");
+                    const request = this.inner.cancelWithCode("m.user");
+                    if (request) {
+                        this.outgoingRequestProcessor.makeOutgoingRequest(request);
+                    }
                 },
             };
             this.emit(VerifierEvent.ShowSas, this.callbacks);

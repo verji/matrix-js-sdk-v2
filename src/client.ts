@@ -560,16 +560,13 @@ export interface Capabilities {
     "org.matrix.msc3882.get_login_token"?: IGetLoginTokenCapability;
 }
 
-/** @deprecated prefer {@link CrossSigningKeyInfo}. */
-export type ICrossSigningKey = CrossSigningKeyInfo;
-
 enum CrossSigningKeyType {
     MasterKey = "master_key",
     SelfSigningKey = "self_signing_key",
     UserSigningKey = "user_signing_key",
 }
 
-export type CrossSigningKeys = Record<CrossSigningKeyType, ICrossSigningKey>;
+export type CrossSigningKeys = Record<CrossSigningKeyType, CrossSigningKeyInfo>;
 
 export type SendToDeviceContentMap = Map<string, Map<string, Record<string, any>>>;
 
@@ -581,7 +578,7 @@ export interface ISignedKey {
     device_id: string;
 }
 
-export type KeySignatures = Record<string, Record<string, ICrossSigningKey | ISignedKey>>;
+export type KeySignatures = Record<string, Record<string, CrossSigningKeyInfo | ISignedKey>>;
 export interface IUploadKeySignaturesResponse {
     failures: Record<
         string,
@@ -865,10 +862,24 @@ interface IThirdPartyUser {
     fields: object;
 }
 
-interface IRoomSummary extends Omit<IPublicRoomsChunkRoom, "canonical_alias" | "aliases"> {
-    room_type?: RoomType;
-    membership?: Membership;
-    is_encrypted: boolean;
+/**
+ * The summary of a room as defined by an initial version of MSC3266 and implemented in Synapse
+ * Proposed at https://github.com/matrix-org/matrix-doc/pull/3266
+ */
+export interface RoomSummary extends Omit<IPublicRoomsChunkRoom, "canonical_alias" | "aliases"> {
+    /**
+     * The current membership of this user in the room.
+     * Usually "leave" if the room is fetched over federation.
+     */
+    "membership"?: Membership;
+    /**
+     * Version of the room.
+     */
+    "im.nheko.summary.room_version"?: string;
+    /**
+     * The encryption algorithm used for this room, if the room is encrypted.
+     */
+    "im.nheko.summary.encryption"?: string;
 }
 
 interface IRoomKeysResponse {
@@ -4862,10 +4873,10 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
                 pathTemplate = "/rooms/$roomId/state/$eventType/$stateKey";
             }
             path = utils.encodeUri(pathTemplate, pathParams);
-        } else if (event.isRedaction()) {
+        } else if (event.isRedaction() && event.event.redacts) {
             const pathTemplate = `/rooms/$roomId/redact/$redactsEventId/$txnId`;
             path = utils.encodeUri(pathTemplate, {
-                $redactsEventId: event.event.redacts!,
+                $redactsEventId: event.event.redacts,
                 ...pathParams,
             });
         } else {
@@ -5761,7 +5772,12 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
      * anyone they share a room with. If false, will return null for such URLs.
      * @param allowRedirects - If true, the caller supports the URL being 307 or
      * 308 redirected to another resource upon request. If false, redirects
-     * are not expected.
+     * are not expected. Implied `true` when `useAuthentication` is `true`.
+     * @param useAuthentication - If true, the caller supports authenticated
+     * media and wants an authentication-required URL. Note that server support
+     * for authenticated media will *not* be checked - it is the caller's responsibility
+     * to do so before calling this function. Note also that `useAuthentication`
+     * implies `allowRedirects`. Defaults to false (unauthenticated endpoints).
      * @returns the avatar URL or null.
      */
     public mxcUrlToHttp(
@@ -5771,8 +5787,18 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
         resizeMethod?: string,
         allowDirectLinks?: boolean,
         allowRedirects?: boolean,
+        useAuthentication?: boolean,
     ): string | null {
-        return getHttpUriForMxc(this.baseUrl, mxcUrl, width, height, resizeMethod, allowDirectLinks, allowRedirects);
+        return getHttpUriForMxc(
+            this.baseUrl,
+            mxcUrl,
+            width,
+            height,
+            resizeMethod,
+            allowDirectLinks,
+            allowRedirects,
+            useAuthentication,
+        );
     }
 
     /**
@@ -9786,11 +9812,21 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
      * @param roomIdOrAlias - The ID or alias of the room to get the summary of.
      * @param via - The list of servers which know about the room if only an ID was provided.
      */
-    public async getRoomSummary(roomIdOrAlias: string, via?: string[]): Promise<IRoomSummary> {
-        const path = utils.encodeUri("/rooms/$roomid/summary", { $roomid: roomIdOrAlias });
-        return this.http.authedRequest(Method.Get, path, { via }, undefined, {
+    public async getRoomSummary(roomIdOrAlias: string, via?: string[]): Promise<RoomSummary> {
+        const paramOpts = {
             prefix: "/_matrix/client/unstable/im.nheko.summary",
-        });
+        };
+        try {
+            const path = utils.encodeUri("/summary/$roomid", { $roomid: roomIdOrAlias });
+            return await this.http.authedRequest(Method.Get, path, { via }, undefined, paramOpts);
+        } catch (e) {
+            if (e instanceof MatrixError && e.errcode === "M_UNRECOGNIZED") {
+                const path = utils.encodeUri("/rooms/$roomid/summary", { $roomid: roomIdOrAlias });
+                return await this.http.authedRequest(Method.Get, path, { via }, undefined, paramOpts);
+            } else {
+                throw e;
+            }
+        }
     }
 
     /**

@@ -20,12 +20,13 @@ import { isNumber, removeHiddenChars } from "../utils";
 import { EventType, UNSTABLE_MSC2716_MARKER } from "../@types/event";
 import { IEvent, MatrixEvent, MatrixEventEvent } from "./event";
 import { MatrixClient } from "../client";
-import { GuestAccess, HistoryVisibility, IJoinRuleEventContent, JoinRule } from "../@types/partials";
+import { GuestAccess, HistoryVisibility, JoinRule } from "../@types/partials";
 import { TypedEventEmitter } from "./typed-event-emitter";
 import { Beacon, BeaconEvent, BeaconEventHandlerMap, getBeaconInfoIdentifier, BeaconIdentifier } from "./beacon";
 import { TypedReEmitter } from "../ReEmitter";
 import { M_BEACON, M_BEACON_INFO } from "../@types/beacon";
 import { KnownMembership } from "../@types/membership";
+import { RoomJoinRulesEventContent } from "../@types/state_events";
 
 export interface IMarkerFoundOptions {
     /** Whether the timeline was empty before the marker event arrived in the
@@ -78,6 +79,8 @@ export enum RoomStateEvent {
 export type RoomStateEventHandlerMap = {
     /**
      * Fires whenever the event dictionary in room state is updated.
+     * This does not guarantee that any related objects (like RoomMember) have been updated.
+     * Use RoomStateEvent.Update for that.
      * @param event - The matrix event which caused this event to fire.
      * @param state - The room state whose RoomState.events dictionary
      * was updated.
@@ -960,7 +963,7 @@ export class RoomState extends TypedEventEmitter<EmittedEvents, EventHandlerMap>
      */
     public getJoinRule(): JoinRule {
         const joinRuleEvent = this.getStateEvents(EventType.RoomJoinRules, "");
-        const joinRuleContent: Partial<IJoinRuleEventContent> = joinRuleEvent?.getContent() ?? {};
+        const joinRuleContent: Partial<RoomJoinRulesEventContent> = joinRuleEvent?.getContent() ?? {};
         return joinRuleContent["join_rule"] || JoinRule.Invite;
     }
 
