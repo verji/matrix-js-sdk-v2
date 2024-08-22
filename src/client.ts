@@ -8548,7 +8548,7 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
      * @param options.limit - the maximum number of results to return. The server will apply a limit if unspecified.
      * @returns Promise which resolves: an array of results.
      */
-    public searchUserDirectory({ term, limit }: { term: string; limit?: number }, extraBodyArgs: {[key:string]: string}|null = {}): Promise<IUserDirectoryResponse> {
+    public searchUserDirectory({ term, limit }: { term: string; limit?: number }, extraBodyArgs: {[key:string]: string}|null = {}, extraOptions: IRequestOpts = {}): Promise<IUserDirectoryResponse> {
         const body: Body = {
             search_term: term, 
             ...extraBodyArgs
@@ -8558,7 +8558,7 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
             body.limit = limit;
         }
 
-        return this.http.authedRequest(Method.Post, "/user_directory/search", undefined, body);
+        return this.http.authedRequest(Method.Post, "/user_directory/search", undefined, body, extraOptions);
     }
 
     /**
