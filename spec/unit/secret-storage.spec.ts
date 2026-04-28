@@ -14,15 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Mocked } from "jest-mock";
+import { type Mocked } from "jest-mock";
 
 import {
-    AccountDataClient,
+    type AccountDataClient,
     calculateKeyCheck,
-    PassphraseInfo,
-    SecretStorageCallbacks,
-    SecretStorageKeyDescriptionAesV1,
-    SecretStorageKeyDescriptionCommon,
+    type PassphraseInfo,
+    type SecretStorageCallbacks,
+    type SecretStorageKeyDescriptionAesV1,
+    type SecretStorageKeyDescriptionCommon,
     ServerSideSecretStorageImpl,
     trimTrailingEquals,
 } from "../../src/secret-storage";
