@@ -18,13 +18,13 @@ import {
     ClientEvent,
     EventTimeline,
     EventType,
-    IRoomTimelineData,
+    type IRoomTimelineData,
     MatrixClient,
-    MatrixEvent,
+    type MatrixEvent,
     RoomEvent,
 } from "../../../src";
 import { RoomStateEvent } from "../../../src/models/room-state";
-import { CallMembershipData } from "../../../src/matrixrtc/CallMembership";
+import { type CallMembershipData } from "../../../src/matrixrtc/CallMembership";
 import { MatrixRTCSessionManagerEvents } from "../../../src/matrixrtc/MatrixRTCSessionManager";
 import { makeMockRoom } from "./mocks";
 

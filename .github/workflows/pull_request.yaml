@@ -11,23 +11,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
 permissions: {} # We use ELEMENT_BOT_TOKEN instead
 jobs:
-    changelog:
-        name: Preview Changelog
-        runs-on: ubuntu-24.04
-        steps:
-            - uses: mheap/github-action-required-labels@388fd6af37b34cdfe5a23b37060e763217e58b03 # v5
-              if: github.event_name != 'merge_group'
-              with:
-                  labels: |
-                      X-Breaking-Change
-                      T-Deprecation
-                      T-Enhancement
-                      T-Defect
-                      T-Task
-                      Dependencies
-                  mode: minimum
-                  count: 1
-
+    # VERJI changelog label-requirement job removed — Verji PRs don't use upstream's T-* / X-* labels
     prevent-blocked:
         name: Prevent Blocked
         runs-on: ubuntu-24.04

@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { EitherAnd } from "matrix-events-sdk/lib/types";
+import { type EitherAnd } from "matrix-events-sdk/lib/types";
 
-import { MatrixEvent } from "../matrix.ts";
+import { type MatrixEvent } from "../matrix.ts";
 import { deepCompare } from "../utils.ts";
-import { Focus } from "./focus.ts";
+import { type Focus } from "./focus.ts";
 import { isLivekitFocusActive } from "./LivekitFocus.ts";
 
 type CallScope = "m.room" | "m.user";

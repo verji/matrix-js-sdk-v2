@@ -18,7 +18,7 @@ import {
     secretStorageCanAccessSecrets,
     secretStorageContainsCrossSigningKeys,
 } from "../../../src/rust-crypto/secret-storage";
-import { ServerSideSecretStorage } from "../../../src/secret-storage";
+import { type ServerSideSecretStorage } from "../../../src/secret-storage";
 
 describe("secret-storage", () => {
     describe("secretStorageContainsCrossSigningKeys", () => {

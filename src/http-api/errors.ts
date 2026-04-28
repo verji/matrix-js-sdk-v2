@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { IMatrixApiError as IWidgetMatrixError } from "matrix-widget-api";
+import { type IMatrixApiError as IWidgetMatrixError } from "matrix-widget-api";
 
-import { IUsageLimit } from "../@types/partials.ts";
-import { MatrixEvent } from "../models/event.ts";
+import { type IUsageLimit } from "../@types/partials.ts";
+import { type MatrixEvent } from "../models/event.ts";
 
 interface IErrorJson extends Partial<IUsageLimit> {
     [key: string]: any; // extensible
@@ -167,8 +167,10 @@ export class MatrixError extends HTTPError {
 }
 
 /**
+ * @param error - The error that may be due to rate-limiting.
+ * @param defaultMs - Fallback delay in milliseconds if no valid retry hint is available.
  * @returns The recommended delay in milliseconds to wait before retrying
- * the request that triggered {@link error}, or {@link defaultMs} if the
+ * the request that triggered `error`, or `defaultMs` if the
  * error was not due to rate-limiting or if no valid delay is recommended.
  */
 export function safeGetRetryAfterMs(error: unknown, defaultMs: number): number {

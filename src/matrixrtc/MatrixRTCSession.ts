@@ -17,27 +17,27 @@ limitations under the License.
 import { logger as rootLogger } from "../logger.ts";
 import { TypedEventEmitter } from "../models/typed-event-emitter.ts";
 import { EventTimeline } from "../models/event-timeline.ts";
-import { Room } from "../models/room.ts";
-import { MatrixClient } from "../client.ts";
+import { type Room } from "../models/room.ts";
+import { type MatrixClient } from "../client.ts";
 import { EventType } from "../@types/event.ts";
 import { UpdateDelayedEventAction } from "../@types/requests.ts";
 import {
     CallMembership,
-    CallMembershipData,
-    CallMembershipDataLegacy,
-    SessionMembershipData,
+    type CallMembershipData,
+    type CallMembershipDataLegacy,
+    type SessionMembershipData,
     isLegacyCallMembershipData,
 } from "./CallMembership.ts";
 import { RoomStateEvent } from "../models/room-state.ts";
-import { Focus } from "./focus.ts";
+import { type Focus } from "./focus.ts";
 import { randomString, secureRandomBase64Url } from "../randomstring.ts";
-import { EncryptionKeysEventContent } from "./types.ts";
+import { type EncryptionKeysEventContent } from "./types.ts";
 import { decodeBase64, encodeUnpaddedBase64 } from "../base64.ts";
 import { KnownMembership } from "../@types/membership.ts";
 import { HTTPError, MatrixError, safeGetRetryAfterMs } from "../http-api/errors.ts";
-import { MatrixEvent } from "../models/event.ts";
+import { type MatrixEvent } from "../models/event.ts";
 import { isLivekitFocusActive } from "./LivekitFocus.ts";
-import { ExperimentalGroupCallRoomMemberState } from "../webrtc/groupCall.ts";
+import { type ExperimentalGroupCallRoomMemberState } from "../webrtc/groupCall.ts";
 import { sleep } from "../utils.ts";
 
 const logger = rootLogger.getChild("MatrixRTCSession");

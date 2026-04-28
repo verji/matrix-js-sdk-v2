@@ -14,15 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { encodeBase64, EventTimeline, EventType, MatrixClient, MatrixError, MatrixEvent, Room } from "../../../src";
+import {
+    encodeBase64,
+    EventTimeline,
+    EventType,
+    MatrixClient,
+    MatrixError,
+    type MatrixEvent,
+    type Room,
+} from "../../../src";
 import { KnownMembership } from "../../../src/@types/membership";
 import {
-    CallMembershipData,
-    CallMembershipDataLegacy,
-    SessionMembershipData,
+    type CallMembershipData,
+    type CallMembershipDataLegacy,
+    type SessionMembershipData,
 } from "../../../src/matrixrtc/CallMembership";
 import { MatrixRTCSession, MatrixRTCSessionEvent } from "../../../src/matrixrtc/MatrixRTCSession";
-import { EncryptionKeysEventContent } from "../../../src/matrixrtc/types";
+import { type EncryptionKeysEventContent } from "../../../src/matrixrtc/types";
 import { randomString } from "../../../src/randomstring";
 import { makeMockRoom, makeMockRoomState, mockRTCEvent } from "./mocks";
 

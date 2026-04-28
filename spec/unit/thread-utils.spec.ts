@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { IEvent } from "../../src";
+import { type IEvent } from "../../src";
 import { randomString } from "../../src/randomstring";
 import { getRelationsThreadFilter } from "../../src/thread-utils";
 

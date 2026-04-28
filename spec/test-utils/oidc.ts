@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { OidcClientConfig, ValidatedIssuerMetadata } from "../../src";
+import { type OidcClientConfig, type ValidatedIssuerMetadata } from "../../src";
 
 /**
  * Makes a valid OidcClientConfig with minimum valid values
